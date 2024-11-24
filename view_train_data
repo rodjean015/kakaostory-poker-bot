@@ -1,0 +1,30 @@
+from google.cloud import storage
+import pickle
+import io
+import pandas as pd
+
+# Initialize a client for Google Cloud Storage
+client = storage.Client()
+
+# Specify your bucket and the file path in the bucket
+bucket_name = 'poker-bot-20242024_cloudbuild'
+file_name = 'training_data/new_train_data.pkl'
+
+# Get the bucket and the blob (file) from GCS
+bucket = client.get_bucket(bucket_name)
+blob = bucket.blob(file_name)
+
+# Download the file content as bytes
+pickle_data = blob.download_as_bytes()
+
+# Load the pickle data into a Python object (e.g., a DataFrame or other data)
+data = pickle.loads(pickle_data)
+
+# Check if the data is a DataFrame
+if isinstance(data, pd.DataFrame):
+    # Set pandas to display all rows
+    pd.set_option('display.max_rows', None)  # None to display all rows
+    print(data)
+else:
+    # If the data is not a DataFrame, print the entire content
+    print(data)
